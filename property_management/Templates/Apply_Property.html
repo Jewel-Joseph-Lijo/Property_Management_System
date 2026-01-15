@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Apply for Property</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    .header-gradient {
+      background: linear-gradient(135deg, #0d47a1, #1976d2) !important;
+    }
+  </style>
+</head>
+<body class="bg-light">
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark header-gradient">
+    <div class="container">
+      {% include 'Name_Logo_Tenant.html' %}
+    </div>
+  </nav>
+
+  <div class="container mt-5">
+    <div class="row justify-content-center">
+      <div class="col-md-8">
+        <div class="card shadow-lg border-0 rounded-4">
+          <div class="card-header header-gradient text-white text-center rounded-top-4">
+            <h4 class="mb-0">Apply for Property</h4>
+          </div>
+          <div class="card-body p-4">
+            <h5 class="fw-bold mb-3">Property Details</h5>
+            <p><strong>Name:</strong> {{properties.name}}</p>
+            <p><strong>Type:</strong> {{properties.property_type}}</p>
+            <p><strong>Rent:</strong> ₹{{properties.rent_amount}}/month</p>
+            <p><strong>Description:</strong> {{properties.description}}</p>
+
+            <form method="POST" class="mt-4">
+              {% csrf_token %}
+              <div class="alert alert-info">
+                <strong>Note:</strong> Once applied, you'll be notified upon approval.
+              </div>
+              <div class="text-center">
+                {# already_applied is a boolean passed from the view #}
+                {% if already_applied %}
+                  <button type="button" class="btn btn-secondary px-5" disabled>Already Applied</button>
+                {% else %}
+                  <button type="submit" class="btn header-gradient border-0 text-white px-5">Apply Now</button>
+                {% endif %}
+                <a href="{% url 'User Property List' %}" class="btn btn-outline-secondary ms-2 px-4">Cancel</a>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

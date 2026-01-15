@@ -1,0 +1,27 @@
+"""
+URL configuration for property_management project.
+
+The `urlpatterns` list routes URLs to views. For more information please see:
+    https://docs.djangoproject.com/en/5.2/topics/http/urls/
+Examples:
+Function views
+    1. Add an import:  from my_app import views
+    2. Add a URL to urlpatterns:  path('', views.home, name='home')
+Class-based views
+    1. Add an import:  from other_app.views import Home
+    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
+Including another URLconf
+    1. Import the include() function: from django.urls import include, path
+    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
+"""
+from django.contrib import admin
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    path('payment_summary/<pk>',views.payment_summary,name='Payment Summary'),
+    path('payment_form/<pk>',views.payment_form,name='Payment Form'),
+    path('payment_success/<pk>',views.payment_success,name='Payment Reciept'),
+    path('payment_history/',views.payment_history,name='Payment History'),
+    path('all_payment_history/',views.all_payment_history,name='All Payment History')
+]

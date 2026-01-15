@@ -1,0 +1,186 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Smart Property Management</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    .hero {
+      background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+        url('{% static "Images/Hero.png" %}') center center / cover no-repeat;
+
+      color: white;
+      min-height: 115vh;
+      padding: 190px 40px 140px;  /* ADDED TOP PADDING (FIXES OVERFLOW) */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    @media (max-width: 768px) {
+      .hero {
+        padding-top: 200px;  /* Extra space for mobile since navbar stacks */
+      }
+    
+    }
+    
+    .property-card img {
+      height: 200px;
+      object-fit: cover;
+    }
+
+    .footer {
+      background-color: #212529;
+      color: #ccc;
+      padding: 30px 0;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+    <div class="container">
+      {% include 'Name_Logo_Tenant.html' %}
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item"><a href="#" class="nav-link active">Home</a></li>
+          <li class="nav-item"><a href="#features" class="nav-link">Features</a></li>
+          <li class="nav-item"><a href="#properties" class="nav-link">Properties</a></li>
+          <li class="nav-item"><a href="#contact" class="nav-link">Contact</a></li>
+          <li class="nav-item"><a href="{% url 'Login' %}" class="btn btn-primary ms-2">Login</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="container">
+      <h1 class="display-4 fw-bold mb-3">Manage Properties with Ease</h1>
+      <p class="lead mb-4">Simplify property management, rent collection, and maintenance tracking — all in one place.</p>
+      <a href="{% url 'Sign Up' %}" class="btn btn-primary btn-lg mt-2 mb-2 me-1">Get Started</a>
+      <a href="#properties" class="btn btn-outline-light btn-lg m">View Properties</a>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section id="features" class="py-5 bg-light">
+    <div class="container">
+      <h2 class="text-center mb-4 fw-bold">Why Choose SmartProperty?</h2>
+      <div class="row g-4">
+        <div class="col-md-4 text-center">
+          <div class="card p-4 shadow-sm h-100">
+            <div class="mb-3 text-primary fs-1">🏢</div>
+            <h5>Easy Property Management</h5>
+            <p>Handle all your properties from a single dashboard with intuitive tools and real-time updates.</p>
+          </div>
+        </div>
+        <div class="col-md-4 text-center">
+          <div class="card p-4 shadow-sm h-100">
+            <div class="mb-3 text-success fs-1">💳</div>
+            <h5>Seamless Rent Payments</h5>
+            <p>Track rent collections, payment history, and generate receipts effortlessly.</p>
+          </div>
+        </div>
+        <div class="col-md-4 text-center">
+          <div class="card p-4 shadow-sm h-100">
+            <div class="mb-3 text-warning fs-1">🛠️</div>
+            <h5>Maintenance Requests</h5>
+            <p>Let tenants report issues easily and resolve them faster with an organized maintenance system.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Featured Properties -->
+  <section id="properties" class="py-5">
+    <div class="container">
+      <h2 class="text-center mb-4 fw-bold">Featured Properties</h2>
+      <div class="row g-4">
+
+        <!-- House -->
+        <div class="col-md-4">
+          <div class="card property-card shadow-sm">
+            <img src="{% static 'Images/House.png' %}" 
+               class="card-img-top" alt="House">
+           <div class="card-body">
+              <h5 class="card-title">Elegant Family House</h5>
+              <p class="card-text">A spacious family home with a private garden, modern interiors, and a peaceful neighborhood atmosphere.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Office Space -->
+        <div class="col-md-4">
+          <div class="card property-card shadow-sm">
+            <img src="{% static 'Images/Office_Space.png' %}" 
+               class="card-img-top" alt="Office Space">
+            <div class="card-body">
+              <h5 class="card-title">Premium Office Space</h5>
+              <p class="card-text">A fully furnished office workspace with high-speed internet, meeting rooms, and business-friendly amenities.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Shop -->
+        <div class="col-md-4">
+          <div class="card property-card shadow-sm">
+            <img src="{% static 'Images/Shop.png' %}" 
+               class="card-img-top" alt="Shop">
+            <div class="card-body">
+              <h5 class="card-title">Commercial Retail Shop</h5>
+              <p class="card-text">A well-located shop ideal for retail businesses, offering excellent visibility and steady customer flow.</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- Contact Section -->
+  <section id="contact" class="py-5 bg-light">
+    <div class="container">
+      <h2 class="text-center mb-4 fw-bold">Contact Us</h2>
+      <div class="row justify-content-center">
+        <div class="col-md-8">
+          <form class="p-4 shadow bg-white rounded">
+            <div class="mb-3">
+              <label class="form-label">Your Name</label>
+              <input type="text" class="form-control" placeholder="Enter your name">
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Email</label>
+              <input type="email" class="form-control" placeholder="Enter your email">
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Message</label>
+              <textarea class="form-control" rows="4" placeholder="Write your message"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary" style="width: 100%;">Send Message</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer text-center">
+    <div class="container">
+      <p class="mb-1">&copy; 2025 Smart Property Management. All Rights Reserved.</p>
+      <small>Developed By Jewel Joseph Lijo</small>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

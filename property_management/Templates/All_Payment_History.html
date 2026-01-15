@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Admin Payment History</title>   
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <style>
+    .gradient-header { background: linear-gradient(135deg, #0d47a1, #1976d2) !important; }
+    .filter-card {
+      background: #ffffff; border-radius: 15px; padding: 20px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.10);
+    }
+    .rounded-top-4 { border-top-left-radius: 1rem !important; border-top-right-radius: 1rem !important; }
+    .table-header-gradient th {
+      background: linear-gradient(135deg, #0d47a1, #1976d2) !important;
+      color: white !important; border: none; padding: 12px;
+    }
+  </style>
+</head>
+
+<body class="bg-light">
+
+<nav class="navbar navbar-expand-lg navbar-dark gradient-header shadow-sm">
+  <div class="container">
+    {% include 'Name_Logo_Admin.html' %}
+  </div>
+</nav>
+
+<div class="container mt-4">
+
+  <!-- FILTER CARD -->
+  <div class="filter-card mb-4">
+    <h5 class="fw-bold" style="color:#1e3c72;">Filters</h5>
+
+    <form class="row g-3">
+
+      <div class="col-md-3">
+        <label class="form-label fw-semibold">Tenant Name</label>
+        <select id="tenantFilter" class="form-select">
+          <option value="">------</option>
+          {% for tenant in tenants %}
+          {% if tenant.role == 'tenant' %}
+          <option>{{tenant.full_name}}</option>
+          {% endif %}
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="col-md-3">
+        <label class="form-label fw-semibold">Property</label>
+        <select id="propertyFilter" class="form-select">
+          <option value="">------</option>
+          {% for property in properties %}
+          <option>{{property.name}} ({{property.property_type}})</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="col-md-3">
+        <label class="form-label fw-semibold">Payment Status</label>
+        <select id="statusFilter" class="form-select">
+          <option value="">------</option>
+          <option>Success</option>
+          <option>Failed</option>
+        </select>
+      </div>
+
+      <div class="col-md-3">
+        <label class="form-label fw-semibold">Date</label>
+        <input type="date" id="dateFilter" class="form-control">
+      </div>
+
+      <div class="col-md-3">
+        <label class="form-label fw-semibold">Time</label>
+        <input type="time" id="timeFilter" class="form-control">
+      </div>
+
+      <div class="col-md-12 mt-3 text-end">
+        <button onclick="searchPayment(event)" 
+                class="btn btn-primary btn-sm px-4 me-2"
+                style="background: linear-gradient(135deg, #0d47a1, #1976d2); border:none;">
+          Apply Filters
+        </button>
+
+        <button type="button" id="resetBtn" class="btn btn-outline-secondary btn-sm px-4">
+          Reset
+        </button>
+      </div>
+
+    </form>
+  </div>
+
+  <!-- PAYMENT TABLE -->
+  <div class="card shadow border-0 rounded-4">
+    <div class="card-header gradient-header text-white text-center rounded-top-4">
+      <h4 class="mb-0">All Payments Overview</h4>
+    </div>
+
+    <div class="card-body p-4 table-responsive">
+
+      <table class="table table-bordered table-hover text-center align-middle">
+        <thead class="table-header-gradient">
+          <tr>
+            <th>Tenant Name</th>
+            <th>Property Name</th>
+            <th>Amount</th>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Status</th>
+            <th>Transaction ID</th>
+          </tr>
+        </thead>
+
+        <tbody class="payment">
+          {% for payment in payments %}
+          <tr>
+            <td>{{payment.tenant}}</td>
+            <td>{{payment.property}}</td>
+            <td>₹{{payment.amount}}</td>
+            <td>{{payment.payment_date}}</td>
+            <td>{{payment.payment_time}}</td>
+
+            {% if payment.status == 'Success' %}
+            <td><span class="badge bg-success">{{payment.status}}</span></td>
+            {% else %}
+            <td><span class="badge bg-danger">{{payment.status}}</span></td>
+            {% endif %}
+
+            <td>{{payment.transaction_id}}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+    </div>
+  </div>
+
+</div>
+
+<!-- FIXED WORKING JAVASCRIPT -->
+<script>
+
+// Parse Django date:  "Dec. 4, 2025"
+function convertDate(rawDate) {
+
+    rawDate = rawDate.replace(/\s+/g, " ").trim();  
+    rawDate = rawDate.replace(".", "");              // Remove dot after month
+
+    // Stop timezone shifting by setting midnight
+    let parsed = new Date(rawDate + " 00:00:00");
+
+    if (isNaN(parsed)) return "";
+
+    return (
+        parsed.getFullYear() + "-" +
+        String(parsed.getMonth() + 1).padStart(2, "0") + "-" +
+        String(parsed.getDate()).padStart(2, "0")
+    );
+}
+
+// Convert “8:52 p.m.” → “20:52”
+function convertTime(rawTime) {
+
+    rawTime = rawTime.toLowerCase().replace(/\s+/g, " ").trim();
+
+    let [time, modifier] = rawTime.split(" ");
+    let [hours, minutes] = time.split(":");
+
+    hours = parseInt(hours);
+    minutes = parseInt(minutes);
+
+    if (modifier === "p.m." && hours !== 12) hours += 12;
+    if (modifier === "a.m." && hours === 12) hours = 0;
+
+    return (
+        hours.toString().padStart(2, "0") + ":" +
+        minutes.toString().padStart(2, "0")
+    );
+}
+
+function searchPayment(event) {
+  event.preventDefault();
+
+  let tenantVal = document.getElementById("tenantFilter").value.toLowerCase();
+  let propertyVal = document.getElementById("propertyFilter").value.toLowerCase();
+  let statusVal = document.getElementById("statusFilter").value.toLowerCase();
+  let dateVal = document.getElementById("dateFilter").value;
+  let timeVal = document.getElementById("timeFilter").value;
+
+  const rows = document.querySelectorAll(".payment tr");
+
+  rows.forEach(row => {
+    let tenant = row.children[0].textContent.toLowerCase();
+    let property = row.children[1].textContent.toLowerCase();
+    let status = row.children[5].textContent.toLowerCase();
+
+    let rowDateRaw = row.children[3].textContent.trim();
+    let rowTimeRaw = row.children[4].textContent.trim();
+
+    let rowDate = convertDate(rowDateRaw);
+    let rowTime = convertTime(rowTimeRaw);
+
+    let show = true;
+
+    if (tenantVal && tenant !== tenantVal) show = false;
+    if (propertyVal && property !== propertyVal) show = false;
+    if (statusVal && status !== statusVal) show = false;
+    if (dateVal && rowDate !== dateVal) show = false;
+    if (timeVal && rowTime !== timeVal) show = false;
+
+    row.style.display = show ? "" : "none";
+  });
+}
+
+document.getElementById("resetBtn").addEventListener("click", function () {
+  document.getElementById("tenantFilter").value = "";
+  document.getElementById("propertyFilter").value = "";
+  document.getElementById("statusFilter").value = "";
+  document.getElementById("dateFilter").value = "";
+  document.getElementById("timeFilter").value = "";
+
+  document.querySelectorAll(".payment tr").forEach(row => {
+    row.style.display = "";
+  });
+});
+
+</script>
+
+</body>
+</html>

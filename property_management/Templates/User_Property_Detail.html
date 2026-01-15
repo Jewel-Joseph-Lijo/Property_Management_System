@@ -1,0 +1,9 @@
+{% extends 'Property_Detail.html' %}
+{% block Name_Logo %}
+    {% include 'Name_Logo_Tenant.html' %}
+{% endblock %}
+{% block content %}
+<div class="text-center mt-4">
+    <a href="{% url 'User Property List' %}" class="btn btn-outline-secondary">Back to Properties</a>
+</div>
+{% endblock %}

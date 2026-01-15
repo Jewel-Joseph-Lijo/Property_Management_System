@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Available Properties</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
+  <style>
+    /* Main Header Gradient */
+    .header-gradient {
+      background: linear-gradient(135deg, #0d47a1, #1976d2) !important;
+    }
+
+    /* White text on header */
+    .header-gradient .btn-outline-light,
+    .header-gradient .navbar-brand,
+    .header-gradient .nav-link {
+      color: #fff !important;
+    }
+
+    .text-gradient{
+      color: linear-gradient(135deg, #0d47a1, #1976d2);
+    }
+
+    /* Gradient Button */
+    .btn-gradient {
+      background: linear-gradient(135deg, #0d47a1, #1976d2);
+      color: white !important;
+      border: none;
+      transition: 0.3s ease-in-out;
+    }
+
+    .btn-gradient:hover {
+      opacity: 0.9;
+      color: white !important;
+    }
+
+    /* Gradient Outline Button */
+    .btn-gradient-outline {
+      border: 1px solid #0d47a1;
+      color: #0d47a1 !important;
+      background: transparent;
+      transition: 0.3s ease-in-out;
+    }
+
+    .btn-gradient-outline:hover {
+      background: linear-gradient(135deg, #0d47a1, #1976d2);
+      color: white !important;
+      border-color: transparent;
+    }
+
+    .btn-gradient-outline-1 {
+      border: 2px solid white;
+      color: white !important;
+      background: transparent;
+      transition: 0.3s ease-in-out;
+    }
+
+    .btn-gradient-outline-1:hover {
+      background: linear-gradient(135deg, #0d47a1, #1976d2);
+      color: white !important;
+      border-color: transparent;
+    }
+
+    .rounded-4 {
+      border-radius: 1rem !important;
+    }
+  </style>
+</head>
+
+<body class="bg-light">
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark header-gradient">
+  <div class="container">
+    {% include 'Name_Logo_Tenant.html' %}
+    <div class="d-flex">
+      <a href="{% url 'My Rental Detail' %}" class="btn btn-gradient-outline-1 btn-sm me-2">
+        <i class="bi bi-person-circle"></i> My Profile
+      </a>
+
+      <a href="{% url 'Logout' %}" class="btn btn-light btn-sm text-gradient fw-semibold">
+        <i class="bi bi-box-arrow-right"></i> Logout
+      </a>
+    </div>
+  </div>
+</nav>
+
+<div class="container mt-5">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h3 class="fw-bold">Available Properties</h3>
+
+    <!-- My Rentals Button (Gradient) -->
+    <a href="{% url 'My Rentals' %}" class="btn btn-gradient">
+      <i class="bi bi-house-door"></i> My Rentals
+    </a>
+  </div>
+
+  <div class="row">
+    {% for property in properties %}
+    <div class="col-md-4 mb-4">
+      <div class="card shadow-sm border-0 rounded-4 h-100">
+        <img src="{{ property.image.url }}" class="card-img-top rounded-top-4" style="height:220px;object-fit:cover;">
+
+        <div class="card-body">
+          <h5 class="card-title">{{ property.name }}</h5>
+
+          <p class="text-muted mb-1">
+            <i class="bi bi-geo-alt"></i> {{ property.address }}
+          </p>
+
+          <p class="mb-1"><strong>Type:</strong> {{ property.property_type }}</p>
+          <p class="mb-2"><strong>Rent:</strong> ₹{{ property.rent_amount }}</p>
+
+          {% if not property.is_occupied %}
+            <span class="badge bg-success mb-2">Vacant</span>
+          {% else %}
+            <span class="badge bg-primary mb-2">Occupied</span>
+          {% endif %}
+
+          <!-- Buttons -->
+          <div class="d-grid gap-2 mt-3">
+            <a href="{% url 'User Property Detail' property.id %}" class="btn btn-gradient-outline btn-sm">
+              <i class="bi bi-eye"></i> View Details
+            </a>
+
+            {% if not property.is_occupied %}
+            <a href="{% url 'Apply Property' property.id %}" class="btn btn-success btn-sm">
+              <i class="bi bi-pencil-square"></i> Apply Now
+            </a>
+            {% endif %}
+          </div>
+
+        </div>
+      </div>
+    </div>
+    {% empty %}
+    <div class="text-center text-muted mt-5">
+      <i class="bi bi-house-slash" style="font-size: 2rem;"></i>
+      <p class="mt-2">No properties available at the moment.</p>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<footer class="text-center py-3 mt-5 bg-white border-top">
+  <p class="text-muted mb-0">&copy; 2025 Smart Property Manager — Tenant Portal</p>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
